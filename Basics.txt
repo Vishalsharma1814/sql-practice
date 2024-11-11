@@ -1,0 +1,5 @@
+//Create table
+create table table_name(
+id int primary key,
+exampleCoulmn varchar(200)
+);
