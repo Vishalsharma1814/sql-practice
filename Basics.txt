@@ -241,5 +241,126 @@ select count(*), d.department from employees e join departments d on e.dept_id =
 SELECT GROUP_CONCAT(name SEPARATOR ', ') AS employee_names
 FROM employees;
 
+-- Simple Definition of Indexes in SQL:
+-- An index in SQL is a tool that helps the database find and retrieve data quickly, just like
+-- an index in a book. It speeds up searches by creating a shortcut to the data, so the database doesn't have to look at every row in a table.
+-- 
+-- Example:
+-- If you have a table with thousands of customer names, an index on the "name" column makes finding a specific name faster.
+-- 
+-- how exactly?
+-- How Indexes Work in SQL:
+-- Indexes work by creating a data structure (usually a B-tree or a hash table) that stores the values of a column (or columns)
+-- in a sorted order along with pointers to the actual rows in the table. This structure allows the database to quickly locate
+-- and access the data without scanning the entire table.
+
+create index idx_hire_date on employees (hire_date);
+
+EXPLAIN PLAN FOR SELECT * FROM employees WHERE hire_date = '2019-09-12';
+
+-- -----VIEW --------
+
+create view sales_view as 
+select e.name, d.department from employees e join departments d on e.dept_id = d.dept_id where d.department = 'Sales';
+
+select * from sales_view ;
+
+-- MYSQL does not support Materialized view -----
+
+create MATERIALIZED view sales_view_mat as 
+select e.name, d.department from employees e join departments d on e.dept_id = d.dept_id where d.department = 'Sales';
+
+select * from sales_view_mat;
+
+
+
+begin;
+
+savepoint before_update;
+
+update employees set name = 'Vishal' where emp_id = 1;
+
+savepoint after_first_update;
+
+
+update employees set name = 'John Doe' where emp_id = 1;
+
+
+savepoint after_second_update;
+
+rollback to savepoint after_first_update;
+
+commit;
+
+
+-- ---------------------------TRIGGER-------------------------------
+CREATE TABLE logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_id INT,
+    log_message VARCHAR(255),
+    log_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER after_employee_insert
+AFTER INSERT ON employees
+FOR EACH ROW
+BEGIN
+    INSERT into logs (emp_id, log_message)
+    VALUES (NEW.emp_id, CONCAT('New employee added: ', NEW.name));
+END 
+
+INSERT INTO employees (name, dept_id, salary, hire_date) VALUES
+('Vishal Sharma', 3, 5000000, '2022-06-15');
+
+create trigger employee_update
+after update on employees
+for each row 
+begin 
+	 INSERT into logs (emp_id, log_message)
+    VALUES (NEW.emp_id, CONCAT('Employee updated: ', NEW.name));
+end
+
+update employees set dept_id  = 2 where name = 'Vishal Sharma';
+
+create trigger employee_remove
+after delete on employees
+for each row
+begin
+	 INSERT into logs (emp_id, log_message)
+    VALUES (OLD.emp_id, CONCAT('Employee deleted: ', OLD.name));
+end
+
+delete from employees where name = 'Vishal Sharma';
+
+
+-- ----------------------------- FUNCTIONS and STORE PROCEDURES
+
+create function salary_count(salary decimal(10,2))
+returns decimal(10,2)
+deterministic -- means function will always return same result for same parameter value
+begin 
+	return salary*12;
+end
+
+-- Non-Deterministic function, which will give different everytime
+CREATE FUNCTION get_current_date()
+RETURNS DATE
+NO sql -- added becuase binary logging is enabled in the local mysql which requires additional safety
+BEGIN
+    RETURN CURRENT_DATE;
+END;
+
+select e.name, salary_count(e.salary) as yearly_salary  from employees e;
+
+
+-- ----------------------------- PROCEDURE ------------------------------
+-- returning data ius optional in procedure
+
+create procedure update_logs(in dept_id int, out total_salary decimal(10,2))
+begin
+	select sum(e.salary) as total_salary from employees e where dept_id = dept_id;
+end;
+
+call update_logs(1, @total_salary);
 
 
