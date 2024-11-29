@@ -1,5 +1,245 @@
-//Create table
-create table table_name(
-id int primary key,
-exampleCoulmn varchar(200)
+create table employees(
+emp_id int AUTO_INCREMENT  primary key,
+name varchar(255) not null,
+dept_id int not  null,
+salary decimal check(salary > 0),
+hire_date date not null,
+FOREIGN KEY (dept_id) REFERENCES departments(dept_id)
 );
+
+create table departments(
+dept_id int AUTO_INCREMENT  primary key,
+department varchar(255) not null,
+location varchar(255)
+);
+
+create table projects(
+project_id int auto_increment primary key,
+project_name varchar(255) not null,
+dept_id int not null,
+budget decimal not null, check(budget >0)
+);
+
+
+INSERT INTO departments (department, location) VALUES
+('Sales', 'New York'),
+('HR', 'San Francisco'),
+('IT', 'Chicago'),
+('Marketing', 'Los Angeles'),
+('Finance', 'Boston');
+
+
+INSERT INTO employees (name, dept_id, salary, hire_date) VALUES
+('John Doe', 1, 55000, '2018-01-15'),
+('Jane Smith', 2, 62000, '2019-03-22'),
+('Alice Johnson', 3, 72000, '2020-07-10'),
+('Bob Brown', 1, 45000, '2017-08-19'),
+('Charlie Davis', 3, 80000, '2021-05-05'),
+('Emma Watson', 4, 50000, '2019-09-12'),
+('David Lee', 5, 90000, '2020-11-30'),
+('Sophia Green', 2, 70000, '2018-06-18'),
+('Liam White', 1, 60000, '2022-02-10'),
+('Olivia Harris', 4, 54000, '2021-07-07');
+
+
+INSERT INTO projects (project_name, dept_id, budget) VALUES
+('Project Alpha', 1, 500000),
+('Project Beta', 2, 300000),
+('Project Gamma', 3, 400000),
+('Project Delta', 4, 250000),
+('Project Epsilon', 5, 450000),
+('Project Zeta', 3, 600000),
+('Project Eta', 1, 320000),
+('Project Theta', 4, 200000),
+('Project Iota', 2, 150000),
+('Project Kappa', 5, 550000);
+
+-- Select Queries:
+
+-- Retrieve all columns from the employees table.
+select * from employees;
+
+-- Retrieve only the name and salary columns from the employees table.
+select e.name, e.salary  from employees e;
+
+-- Retrieve the names of employees who work in the IT department.
+select e.name, d.department  from employees e join departments d on e.dept_id = d.dept_id where d.department = "IT";
+
+
+-- Filtering Data:
+
+-- Find all employees with a salary greater than 60,000.
+select * from employees e where e.salary > 60000;
+
+-- Find employees hired after January 1, 2019.
+select * from employees e where e.hire_date > "2019-01-01"
+
+-- Retrieve employees from the Sales department earning less than 50,000.
+select e.name, e.salary, d.department from employees e join departments d 
+on e.dept_id = d.dept_id where d.department = "Sales" and e.salary < 50000;
+
+
+-- Sorting Data:
+
+-- List all employees ordered by their salary in descending order.
+select * from employees order by salary desc;
+
+-- Retrieve employees ordered by their hire_date in ascending order.
+select * from employees order by hire_date;
+
+-- Using Joins:
+
+-- Join the employees table with the departments table and display employee names along with their department names.
+ select e.name, d.department from employees e join departments d on e.dept_id = d.dept_id;
+
+-- Join projects with departments and retrieve project names along with their department locations.
+select p.project_name, d.department from departments d  join  projects p on d.dept_id = p.dept_id;
+
+-- Aggregate Functions:
+
+-- Find the average salary of employees in each department.
+select avg(e.salary) from employees e join departments d on e.dept_id = d.dept_id  group by (e.dept_id);
+
+-- Count the total number of employees in each department.
+select d.department , count(*) as emoloyee_count  from employees e join departments d on
+e.dept_id = d.dept_id  group by (e.dept_id);
+
+-- Find the maximum salary in the company.
+select max(e.salary) from employees e;
+
+-- Group By and Having:
+
+-- Group employees by department and find the total salary paid to each department.
+select d.department, sum(e.salary) as total_salary from employees e join departments d 
+on e.dept_id = d.dept_id group by (d.dept_id);
+
+-- Find departments with total salaries greater than 100,000.
+select d.department, sum(e.salary) as total_salary from employees e join departments d 
+on e.dept_id = d.dept_id group by (d.dept_id) having total_salary > 100000;
+
+-- Insert, Update, Delete:
+
+-- Insert a new employee into the employees table.
+INSERT INTO employees (name, dept_id, salary, hire_date) VALUES
+('Sabrina Mathew', 3, 57000, '2017-06-15');
+
+-- Update the salary of an employee with emp_id = 104 to 55,000.
+update employees set salary = 55000 where emp_id = 104;
+
+-- Delete an employee hired before 2018.
+delete from employees where hire_date < "2018-01-01";
+
+-- Subqueries:
+
+-- Find the names of employees who work in a department located in Chicago.
+select * from employees e where e.dept_id in (select d.dept_id from departments d where d.location = "Chicago");
+
+-- Retrieve employees earning more than the average salary.
+select * from employees e where e.salary > (select avg(e2.salary)from employees e2);
+
+-- Basic Filtering:
+
+-- Retrieve all employees hired after January 1, 2020.
+select * from employees e where e.hire_date > "2020-01-01";
+
+-- Get all employees whose salary is greater than 60,000 but less than 80,000.
+select * from employees e where e.salary between 60000 and 80000;
+
+-- Find employees who work in the Sales or IT department.
+select * from employees e where e.dept_id in (select d.dept_id from departments d where d.department in ('IT', 'Sales'));
+
+-- DISTINCT and LIMIT:
+
+-- List all distinct department names from the departments table.
+select distinct * from departments;
+
+-- Retrieve the top 3 highest-paid employees.
+select * from employees e order by e.salary desc  limit 3;
+
+-- Fetch the first 5 projects with the lowest budget.
+
+select * from projects p order by p.budget limit 5;
+
+-- INNER JOIN:
+
+-- Get a list of all employees along with their department names.
+select e.name, d.department from employees e join departments d on e.dept_id = d.dept_id;
+
+-- Retrieve all projects along with the department location they belong to.
+
+select p.project_name, d.department from projects p join departments d on p.dept_id = d.dept_id;
+
+-- LEFT JOIN:
+
+-- List all departments along with their employees (include departments with no employees).
+select * from departments d left join employees e on d.dept_id = e.dept_id;
+
+-- Retrieve all projects and their associated department names, even if some departments have no projects.
+select * from departments d left join projects e on d.dept_id = e.dept_id;
+
+-- CROSS JOIN:
+
+-- Generate all possible combinations of employees and projects.
+select * from employees e cross join projects p on  e.dept_id = p.dept_id;
+
+-- SELF JOIN:
+
+-- Find employees earning more than another employee in the same department.
+SELECT e1.name AS employee_name, e1.salary, e2.name AS compared_employee, e2.salary AS compared_salary, d.department
+FROM employees e1
+INNER JOIN employees e2 ON e1.dept_id = e2.dept_id AND e1.salary > e2.salary
+INNER JOIN departments d ON e1.dept_id = d.dept_id
+ORDER BY d.department, e1.salary DESC;
+
+-- Subqueries Practice:
+select e.name, (select sum(d.budget) from projects d where d.dept_id = e.dept_id) as total_budget  from employees e;
+
+--  Aggregate Functions and Grouping:
+-- COUNT():
+
+-- How many employees are there in each department?
+select count(*) from employees group by dept_id;
+
+-- Count the number of projects with a budget greater than 400,000.
+select count(*) as total_projects from projects p where p.budget > 400000;
+
+-- SUM():
+
+-- Calculate the total salary of employees in each department.
+select d.department, sum(e.salary) as total_salary from employees e join departments d 
+on e.dept_id = d.dept_id group by (d.dept_id);
+
+-- Find the total budget allocated to all projects in the IT department.
+AVG():
+
+-- Get the average budget of projects across all departments.
+
+select avg(p.budget) from projects p;
+
+MIN() and MAX():
+
+-- Identify the minimum and maximum salaries in each department.
+
+-- Find the project with the highest budget.
+
+GROUP BY:
+
+-- Group employees by department and find the total number of employees in each department.
+select count(*), d.department from employees e join departments d on e.dept_id = d.dept_id group by e.dept_id, d.department;
+
+-- Group projects by department and find the total budget for each department.
+
+
+-- 
+-- HAVING:
+-- 
+-- Find departments with more than 3 employees.
+-- Identify departments where the total salary exceeds 200,000.
+
+-- group concat
+
+SELECT GROUP_CONCAT(name SEPARATOR ', ') AS employee_names
+FROM employees;
+
+
+
