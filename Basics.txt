@@ -363,4 +363,46 @@ end;
 
 call update_logs(1, @total_salary);
 
+create trigger new_trigger 
+after update on employees 
+for each row
+begin
+	dkajg jdbajlghd
+end
 
+create function hello_world(var varchar(255))
+returns varchar(500)
+deterministic
+begin
+	return concat('Hello ', var);
+end
+
+select hello_world('World');
+
+create view hello_world as
+select 'Hello World' from employees e limit 1 ;
+
+select * from hello_world;
+
+create procedure my_hello_world_procedure(in vari varchar(200), out out_put varchar(255))
+begin
+	select concat('Hello ', vari) as out_put from employees e limit 1 ; 
+end
+
+call my_hello_world_procedure('Vishallli', @outt);
+
+
+
+
+-- 1NF
+-- A relation is in 1NF if it contains an atomic value.
+-- 2NF
+-- A relation will be in 2NF if it is in 1NF and all non-key attributes are fully functional dependent on the primary key.
+-- 3NF
+-- A relation will be in 3NF if it is in 2NF and no transition dependency exists.
+-- BCNF
+-- A stronger definition of 3NF is known as Boyce Codd's normal form.
+-- 4NF
+-- A relation will be in 4NF if it is in Boyce Codd's normal form and has no multi-valued dependency.
+-- 5NF
+-- A relation is in 5NF. If it is in 4NF and does not contain any join dependency, joining should be lossless.
