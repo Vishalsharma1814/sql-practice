@@ -572,6 +572,29 @@ select  e.salary from employees e where e.salary in
 (selecfrom emoploee e2 group by e2.salary order by e.salary desc) 
 order by e.salary;
 
+--SET Operations
+
+--Set opertaions combines results of two or more select queries into a single result set.
+--1. UNION - Combine result of both queries and if two similar record exists then it takes only one of them.
+slect name from students;
+union 
+select name from teachers;
+
+--2. UNION ALL - Combines result of both queries and keep duplicates as different rows
+select name from students;
+UNION ALL
+select name from teachers;
+
+--3. INTERSECT - Gets common data set from both queries.
+select name from students;
+INTERSECT
+select name from teachers;
+
+--4. EXCEPT or MINUS - Get all the records of first select query which are not in second query.
+select name from students;
+EXCEPT
+select name from employees;
+
 -- CTE
 -- A CTE (Common Table Expression) in SQL is a temporary result set that can be referenced within a SELECT, INSERT, UPDATE, or DELETE statement. It's typically used to simplify complex queries and improve readability.
 
