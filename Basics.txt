@@ -572,28 +572,70 @@ select  e.salary from employees e where e.salary in
 (selecfrom emoploee e2 group by e2.salary order by e.salary desc) 
 order by e.salary;
 
---SET Operations
 
---Set opertaions combines results of two or more select queries into a single result set.
---1. UNION - Combine result of both queries and if two similar record exists then it takes only one of them.
-slect name from students;
-union 
-select name from teachers;
 
---2. UNION ALL - Combines result of both queries and keep duplicates as different rows
-select name from students;
-UNION ALL
-select name from teachers;
+-- Alter commands
 
---3. INTERSECT - Gets common data set from both queries.
-select name from students;
-INTERSECT
-select name from teachers;
+-- 1. Adding a Column
+ALTER TABLE employees
+ADD COLUMN age INT;
 
---4. EXCEPT or MINUS - Get all the records of first select query which are not in second query.
-select name from students;
-EXCEPT
-select name from employees;
+-- 2. Dropping a Column
+ALTER TABLE employees
+DROP COLUMN age;
+
+-- 3. Modifying a Column (Change Data Type)
+ALTER TABLE employees
+MODIFY COLUMN age VARCHAR(3);
+
+-- 4. Renaming a Column
+ALTER TABLE employees
+CHANGE COLUMN age years INT;
+
+-- 5. Renaming a Table
+ALTER TABLE employees
+RENAME TO staff;
+
+-- 6. Adding a Primary Key
+ALTER TABLE employees
+ADD PRIMARY KEY (employee_id);
+
+-- 7. Dropping a Primary Key
+ALTER TABLE employees
+DROP PRIMARY KEY;
+
+-- 8. Adding a Foreign Key
+ALTER TABLE orders
+ADD CONSTRAINT fk_customer
+FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+
+-- 9. Dropping a Foreign Key
+ALTER TABLE orders
+DROP FOREIGN KEY fk_customer;
+
+-- 10. Adding an Index
+ALTER TABLE employees
+ADD INDEX idx_name (name);
+
+-- 11. Dropping an Index
+ALTER TABLE employees
+DROP INDEX idx_name;
+
+-- 12. Adding a Default Value to a Column
+ALTER TABLE employees
+ALTER COLUMN age SET DEFAULT 30;
+
+-- 13. Removing a Default Value from a Column
+ALTER TABLE employees
+ALTER COLUMN age DROP DEFAULT;
+
+-- 14. Changing the Table Engine
+ALTER TABLE employees
+ENGINE = InnoDB;
+
+-- 15. Auto Increment Reset
+ALTER TABLE employees
+AUTO_INCREMENT = 1001;
 
 -- CTE
 -- A CTE (Common Table Expression) in SQL is a temporary result set that can be referenced within a SELECT, INSERT, UPDATE, or DELETE statement. It's typically used to simplify complex queries and improve readability.
